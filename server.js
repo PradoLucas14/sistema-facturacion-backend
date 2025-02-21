@@ -1,18 +1,14 @@
 require("dotenv").config();
 const express = require("express");
-const mongoose = require("mongoose");
 const cors = require("cors");
+const connectDB = require("./config/db"); // Importar conexión a la DB
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Conectar a MongoDB
-mongoose.connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}).then(() => console.log("✅ Conectado a MongoDB"))
-  .catch(err => console.error("❌ Error en la conexión:", err));
+// Conectar a la base de datos
+connectDB();
 
 // Ruta de prueba
 app.get("/", (req, res) => {
