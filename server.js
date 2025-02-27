@@ -1,22 +1,25 @@
-require("dotenv").config();
 const express = require("express");
+const connectDB = require("./config/db");
 const cors = require("cors");
-const connectDB = require("./config/db"); // Importar conexión a la DB
+require("dotenv").config();
 
+// Inicializar aplicación
 const app = express();
-app.use(cors());
-app.use(express.json());
 
 // Conectar a la base de datos
 connectDB();
 
-// Ruta de prueba
-app.get("/", (req, res) => {
-    res.send("🚀 API de Sistema de Facturación funcionando...");
-});
+// Middlewares
+app.use(cors());
+app.use(express.json());
+
+// Rutas
+app.use("/api/users", require("./routes/userRoutes"));  // Rutas de usuarios
+app.use("/api/products", require("./routes/productRoutes"));  // Rutas de productos
+app.use("/api/sales", require("./routes/saleRoutes"));  // Rutas de ventas
+
+// Puerto del servidor
+const PORT = process.env.PORT || 5000;
 
 // Iniciar servidor
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-    console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
-});
+app.listen(PORT, () => console.log(`🔥 Servidor corriendo en el puerto ${PORT}`));
