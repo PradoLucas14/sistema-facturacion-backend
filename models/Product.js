@@ -12,6 +12,11 @@ const ProductSchema = new mongoose.Schema({
         required: true,
         min: 0 // No permite precios negativos
     },
+    costPrice: {
+        type: Number,
+        required: true,
+        min: 0 // No permite costos negativos
+    },
     stock: {
         type: Number,
         required: true,

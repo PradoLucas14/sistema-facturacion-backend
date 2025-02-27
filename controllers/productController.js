@@ -2,7 +2,7 @@ const Product = require("../models/Product");
 
 // Crear un producto
 exports.createProduct = async (req, res) => {
-    const { name, price, stock } = req.body;
+    const { name, price, costPrice, stock } = req.body;
 
     try {
         // Validar si el producto ya existe
@@ -11,8 +11,13 @@ exports.createProduct = async (req, res) => {
             return res.status(400).json({ msg: "El producto ya existe" });
         }
 
+        // Validar valores negativos
+        if (price < 0 || costPrice < 0 || stock < 0) {
+            return res.status(400).json({ msg: "El precio, costo y stock no pueden ser negativos" });
+        }
+
         // Crear nuevo producto
-        const product = new Product({ name, price, stock });
+        const product = new Product({ name, price, costPrice, stock });
         await product.save();
         res.status(201).json({ msg: "Producto creado exitosamente", product });
     } catch (error) {
@@ -46,11 +51,11 @@ exports.getProductById = async (req, res) => {
 // Editar un producto (PATCH)
 exports.updateProduct = async (req, res) => {
     try {
-        const { price, stock } = req.body;
+        const { price, costPrice, stock } = req.body;
 
-        // No permitir stock ni precio negativo
-        if (price < 0 || stock < 0) {
-            return res.status(400).json({ msg: "El precio y el stock no pueden ser negativos" });
+        // No permitir valores negativos
+        if (price < 0 || costPrice < 0 || stock < 0) {
+            return res.status(400).json({ msg: "El precio, costo y stock no pueden ser negativos" });
         }
 
         const product = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -64,6 +69,7 @@ exports.updateProduct = async (req, res) => {
         res.status(500).json({ msg: "Error en el servidor" });
     }
 };
+
 
 // Eliminar un producto
 exports.deleteProduct = async (req, res) => {
