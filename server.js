@@ -1,5 +1,6 @@
 const express = require("express");
 const connectDB = require("./config/db");
+const morgan = require("morgan");
 const cors = require("cors");
 require("dotenv").config();
 
@@ -12,6 +13,7 @@ connectDB();
 // Middlewares
 app.use(cors());
 app.use(express.json());
+app.use(morgan("dev"));
 
 // Rutas
 app.use("/api/users", require("./routes/userRoutes"));  // Rutas de usuarios
