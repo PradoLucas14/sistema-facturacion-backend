@@ -11,9 +11,12 @@ const SaleSchema = new mongoose.Schema(
             }
         ],
         totalAmount: { type: Number, required: true, min: 0 },
+        nombreCliente: { type: String, required: true },
+        metodoPago: { type: String, required: true },  
         createdAt: { type: Date, default: Date.now },
     },
     { timestamps: true }
 );
 
 module.exports = mongoose.model("Sale", SaleSchema);
+

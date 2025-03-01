@@ -4,14 +4,28 @@ const fs = require("fs");
 
 exports.createSale = async (req, res) => {
     try {
-        const { userId, products } = req.body;
+        const { userId, products, nombreCliente, metodoPago } = req.body;
+
+        // Validación de que los campos obligatorios estén presentes
+        if (!nombreCliente || !metodoPago) {
+            return res.status(400).json({ msg: "El nombre del cliente y el método de pago son obligatorios" });
+        }
 
         let totalAmount = 0;
         for (let item of products) {
             totalAmount += item.quantity * item.price;
         }
 
-        const sale = new Sale({ userId, products, totalAmount });
+        // Crear la venta con los nuevos campos
+        const sale = new Sale({
+            userId,
+            products,
+            totalAmount,
+            nombreCliente,
+            metodoPago,
+        });
+
+        // Guardar la venta
         await sale.save();
 
         res.status(201).json({ msg: "Venta registrada", sale });
@@ -46,8 +60,9 @@ exports.generateInvoice = async (req, res) => {
         doc.fontSize(20).text("Factura de Compra", { align: "center" });
         doc.moveDown();
         doc.text(`Fecha: ${new Date(sale.createdAt).toLocaleString()}`);
-        doc.text(`Cliente: ${sale.userId.username}`);
+        doc.text(`Cliente: ${sale.nombreCliente}`);  // Mostrar nombre del cliente
         doc.text(`Correo: ${sale.userId.email}`);
+        doc.text(`Método de pago: ${sale.metodoPago}`);  // Mostrar método de pago
         doc.moveDown();
 
         doc.fontSize(16).text("Productos:", { underline: true });
